@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bdqn.bills.dao.BillsMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.bdqn.bills.entity.Bills">
+        <id column="id" property="id" />
+        <result column="title" property="title" />
+        <result column="billtime" property="billtime" />
+        <result column="typeid" property="typeid" />
+        <result column="price" property="price" />
+        <result column="remark" property="remark" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, title, billtime, typeid, price, remark
+    </sql>
+
+    <select id="findBillListByPage" resultType="com.bdqn.bills.entity.Bills">
+        select b.*,t.name typeName from bills b
+        inner join billtype t on t.id = b.typeid
+        <where>
+            <if test="bills.title!=null and bills.title!=''">
+                and b.title like concat('%',#{bills.title},'%')
+            </if>
+            <if test="bills.typeid!=null">
+                and b.typeid = #{bills.typeid}
+            </if>
+            <if test="bills.startTime!=null">
+               <![CDATA[ and b.billtime >= #{bills.startTime}  ]]>
+            </if>
+            <if test="bills.endTime!=null">
+                <![CDATA[ and b.billtime <= #{bills.endTime}  ]]>
+            </if>
+        </where>
+        order by b.billtime desc
+    </select>
+
+</mapper>
